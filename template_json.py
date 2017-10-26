@@ -69,7 +69,7 @@ class Template_json :
             }
 
 
-    def addItem(self, title, image_url, feedback, address, location):
+    def addItem(self, title, image_url, feedback, address):
         bobble={
         "title":title,
         "image_url":image_url,
@@ -77,7 +77,7 @@ class Template_json :
         "buttons":[
                     {
                         "type":"web_url",
-                        "url":"https://www.google.com.tw/maps/place/" + title + "/@" + location['lat'] + "," + location['lng'],
+                        "url":"https://www.google.com.tw/maps/place/" + title ,
                         "title":"View Website"
                     },{
                         "type":"postback",
