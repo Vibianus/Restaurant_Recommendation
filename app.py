@@ -62,7 +62,12 @@ def webhook():
                     pass
 
                 if messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
-                    pass
+                    sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
+                    recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
+                    message_text = messaging_event["postback"]["payload"]  # the message's text
+                    message_text = message_text.encode('utf-8')
+                    reply = handle_feedback( message_text, sender_id )
+                    send_message( sender_id, reply )
 
     return "ok", 200
 
@@ -90,6 +95,12 @@ def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
     sys.stdout.flush()
 
+def handle_feedback(message_text, recipient_id):
+        rec_result = connect_server(message_text, recipient_id, 'U', restaurant_id=message_text[1:], record=message_text[0])
+        print(rec_result)
+        if message_text[0] == 'Y' : return '😀 已更新您的喜好'
+        if message_text[0] == 'N' : return '😓 已更新您的喜好'
+
 
 def handle_message(message_text, recipient_id):
 
@@ -115,7 +126,7 @@ def handle_message(message_text, recipient_id):
 
     if u'餐廳'.encode("utf8") in message_text or u'吃飯'.encode("utf8") in message_text or u'吃的'.encode("utf8") in message_text or u'吃什麼'.encode("utf8") in message_text or u'午餐'.encode("utf8") in message_text or u'晚餐'.encode("utf8") in message_text:
 
-        rec_result = connect_server(message_text, recipient_id)
+        rec_result = connect_server(message_text, recipient_id, 'R')
         restaurant = template_json.Template_json(recipient_id,template_type=1)
         for item in rec_result :
             if 'chinese_type' in item :
@@ -126,11 +137,13 @@ def handle_message(message_text, recipient_id):
 
     return '😵😵不太懂剛剛的話呢'
 
-def connect_server(message_text, recipient_id):
+def connect_server(message_text, recipient_id, conn_type, restaurant_id=None, record=None):
     json_dict = {}
-    json_dict['type'] = 'R'
-    json_dict['user'] = '116534363970746295906'
+    json_dict['type'] = conn_type
+    json_dict['user'] = '洪梓軒66666'
     json_dict['location'] = '87.87, 887.87'
+    if restaurant_id : json_dict['restaurant_id'] = restaurant_id
+    if record : json_dict['record'] = record
     json_item = json.dumps(json_dict)
 
     r = requests.get('http://140.116.247.172:8888', data=json_item.encode('utf-8')).content
