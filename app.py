@@ -4,6 +4,7 @@ import sys
 import json
 import client
 import template_json
+import requests
 from datetime import datetime
 from send_msg import sendtofb
 import requests
@@ -113,18 +114,24 @@ def handle_message(message_text, recipient_id):
         return '多多休息，要記得看醫生喔'
 
     if u'餐廳'.encode("utf8") in message_text or u'吃飯'.encode("utf8") in message_text or u'吃的'.encode("utf8") in message_text or u'吃什麼'.encode("utf8") in message_text or u'午餐'.encode("utf8") in message_text or u'晚餐'.encode("utf8") in message_text:
-        return '多多休息，要記得看醫生喔'
-        # rec_result = connect_server(message_text, recipient_id) ;
-        # restaurant = template_json.Template_json(recipient_id,template_type=1)
-        # for item in rec_result :
-        #     restaurant.addItem( item['title'], item['picture'], item['picture'], item['address'])
-        # return restaurant
+
+        rec_result = connect_server(message_text, recipient_id)
+        restaurant = template_json.Template_json(recipient_id,template_type=1)
+        for item in rec_result :
+            restaurant.addItem( item['title'], item['picture'], item['picture'], item['address'])
+        return restaurant
 
     return '😵😵不太懂剛剛的話呢'
 
 def connect_server(message_text, recipient_id):
-    conn = client.Connect()
-    return conn.recommend_request('116534363970746295906', '22.997689, 120.221135')
+    json_dict = {}
+    json_dict['type'] = 'R'
+    json_dict['user'] = '116534363970746295906'
+    json_dict['location'] = '87.87, 887.87'
+    json_item = json.dumps(json_dict)
+
+    r = requests.get('http://140.116.247.172:8888', data=json_item.encode('utf-8')).content
+    return json.loads(r.decode('utf-8'))
 
 
 
