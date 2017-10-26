@@ -69,7 +69,7 @@ class Template_json :
             }
 
 
-    def addItem(self, title, image_url, item_url, address):
+    def addItem(self, title, image_url, feedback, address):
         bobble={
         "title":title,
         "image_url":image_url,
@@ -79,6 +79,14 @@ class Template_json :
                         "type":"web_url",
                         "url":item_url,
                         "title":"View Website"
+                    },{
+                        "type":"postback",
+                        "title":"Love It!",
+						"payload": 'Y' + feedback
+                    },{
+                        "type":"postback",
+                        "title":"Not Good...",
+						"payload": 'N' + feedback
                     }
             ]
         }

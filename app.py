@@ -117,8 +117,11 @@ def handle_message(message_text, recipient_id):
 
         rec_result = connect_server(message_text, recipient_id)
         restaurant = template_json.Template_json(recipient_id,template_type=1)
-        for item in rec_result :
-            restaurant.addItem( item['title'], item['picture'], item['picture'], item['address'])
+        for item : in rec_result :
+            if 'chinese_type' in item :
+                restaurant.addItem( item['title'], item['picture'], item['place_id'], item['chinese_type'] + '  ' +item['address'])
+            else :
+                restaurant.addItem( item['title'], item['picture'], item['place_id'], item['address'])
         return restaurant
 
     return '😵😵不太懂剛剛的話呢'
