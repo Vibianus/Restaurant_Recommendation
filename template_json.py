@@ -77,7 +77,7 @@ class Template_json :
         "buttons":[
                     {
                         "type":"web_url",
-                        "url":item_url,
+                        "url":image_url,
                         "title":"View Website"
                     },{
                         "type":"postback",
