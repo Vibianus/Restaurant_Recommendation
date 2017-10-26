@@ -1,6 +1,6 @@
 #coding:utf-8
 class Template_json :
-    def __init__(self, sender_id, template_type, text, payload_yes, payload_no):
+    def __init__(self, sender_id, template_type, text=None, payload_yes=None, payload_no=None):
         self.text= text
         self.payload_yes = payload_yes
         self.payload_no = payload_no
