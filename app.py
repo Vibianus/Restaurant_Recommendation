@@ -43,6 +43,15 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
 
+                    if "attachments" in messaging_event["message"] :
+                        for attachment in messaging_event["message"]["attachments"] :
+                            if "payload" in attachment and "coordinates" in attachment["payload"] :
+                                lat = attachment["payload"]["coordinates"]["lat"]
+                                lng = attachment["payload"]["coordinates"]["long"]
+                                reply = "location : " + str(lat) + ", " + str(lng)
+                                send_message( sender_id, reply )
+                        pass
+
                     if "text" in messaging_event["message"] :
                         message_text = messaging_event["message"]["text"]  # the message's text
                         message_text = message_text.encode('utf-8').lower()
@@ -64,6 +73,10 @@ def webhook():
                 if messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
+                    if "text" in messaging_event["postback"]["payload"] :
+
+
+
                     message_text = messaging_event["postback"]["payload"]  # the message's text
                     message_text = message_text.encode('utf-8')
                     if message_text == "<GET_STARTED_PAYLOAD>" :
