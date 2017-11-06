@@ -51,7 +51,7 @@ def webhook():
                                 print(str(check))
                                 reply = "已記錄位置資訊😀   日後想更改位置可以再次傳送位置給我~"
                                 send_message( sender_id, reply )
-                        pass
+                        break
 
                     if "text" in messaging_event["message"] :
                         message_text = messaging_event["message"]["text"]  # the message's text
