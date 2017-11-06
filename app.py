@@ -46,9 +46,10 @@ def webhook():
                     if "attachments" in messaging_event["message"] :
                         for attachment in messaging_event["message"]["attachments"] :
                             if "payload" in attachment and "coordinates" in attachment["payload"] :
-                                lat = attachment["payload"]["coordinates"]["lat"]
-                                lng = attachment["payload"]["coordinates"]["long"]
-                                reply = "location : " + str(lat) + ", " + str(lng)
+                                location = attachment["payload"]["coordinates"]
+                                check = connect_server( sender_id, 'A', location=location)
+                                print(str(check))
+                                reply = "已記錄位置資訊😀   日後想更改位置可以再次傳送位置給我~"
                                 send_message( sender_id, reply )
                         pass
 
@@ -56,7 +57,7 @@ def webhook():
                         message_text = messaging_event["message"]["text"]  # the message's text
                         message_text = message_text.encode('utf-8').lower()
 
-                        reply = handle_message( message_text, sender_id)
+                        reply = handle_message( message_text, sender_id )
 
                         if type(reply) == str :
                             send_message( sender_id, reply )
@@ -109,7 +110,7 @@ def log(message):  # simple wrapper for logging to stdout on heroku
     sys.stdout.flush()
 
 def handle_feedback(message_text, recipient_id):
-        rec_result = connect_server(message_text, recipient_id, 'U', restaurant_id=message_text[1:], record=message_text[0])
+        rec_result = connect_server( recipient_id, 'U', restaurant_id=message_text[1:], record=message_text[0])
         print(rec_result)
         if message_text[0] == 'Y' : return '😀 已更新您的喜好'
         if message_text[0] == 'N' : return '😓 已更新您的喜好'
@@ -142,8 +143,7 @@ def handle_message(message_text, recipient_id):
         return '多多休息，要記得看醫生喔'
 
     if u'餐廳'.encode("utf8") in message_text or u'吃飯'.encode("utf8") in message_text or u'吃的'.encode("utf8") in message_text or u'吃什麼'.encode("utf8") in message_text or u'午餐'.encode("utf8") in message_text or u'晚餐'.encode("utf8") in message_text:
-        check = connect_server(message_text, recipient_id, 'A')
-        rec_result = connect_server(message_text, recipient_id, 'R')
+        rec_result = connect_server( recipient_id, 'R')
         restaurant = template_json.Template_json(recipient_id,template_type=1)
         for item in rec_result :
             if 'chinese_type' in item :
@@ -154,12 +154,12 @@ def handle_message(message_text, recipient_id):
 
     return '😵😵不太懂剛剛的話呢'
 
-def connect_server(message_text, recipient_id, conn_type, restaurant_id=None, record=None):
+def connect_server( recipient_id, conn_type, restaurant_id=None, record=None, location=None):
     json_dict = {}
     json_dict['type'] = conn_type
     #json_dict['user'] = '洪梓軒66666'
     json_dict['user'] = recipient_id
-    json_dict['location'] = '87.87, 887.87'
+    if location : json_dict['location'] = location
     if restaurant_id : json_dict['restaurant_id'] = restaurant_id
     if record : json_dict['record'] = record
     json_item = json.dumps(json_dict)
