@@ -125,7 +125,7 @@ def handle_message(message_text, recipient_id):
         return '多多休息，要記得看醫生喔'
 
     if u'餐廳'.encode("utf8") in message_text or u'吃飯'.encode("utf8") in message_text or u'吃的'.encode("utf8") in message_text or u'吃什麼'.encode("utf8") in message_text or u'午餐'.encode("utf8") in message_text or u'晚餐'.encode("utf8") in message_text:
-    check = connect_server(message_text, recipient_id, 'A')
+        check = connect_server(message_text, recipient_id, 'A')
         rec_result = connect_server(message_text, recipient_id, 'R')
         restaurant = template_json.Template_json(recipient_id,template_type=1)
         for item in rec_result :
