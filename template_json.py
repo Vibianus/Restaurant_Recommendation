@@ -68,6 +68,24 @@ class Template_json :
                 }
             }
 
+        if template_type == 4:
+            self.template ={
+                "recipient":
+                {
+                    "id": sender_id
+                },
+                "message":
+                {
+                    "text": "本服務需要您的位置以計算推薦資訊~",
+                    "quick_replies": [
+                        {
+                            "content_type":"location"
+                        }
+                    ]
+                }
+            }
+
+
 
     def addItem(self, title, image_url, feedback, address):
         bobble={
@@ -82,11 +100,11 @@ class Template_json :
                     },{
                         "type":"postback",
                         "title":"Love It!",
-						"payload": 'Y' + feedback
+    "payload": 'Y' + feedback
                     },{
                         "type":"postback",
                         "title":"Not Good...",
-						"payload": 'N' + feedback
+    "payload": 'N' + feedback
                     }
             ]
         }

@@ -66,8 +66,12 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["postback"]["payload"]  # the message's text
                     message_text = message_text.encode('utf-8')
-                    reply = handle_feedback( message_text, sender_id )
-                    send_message( sender_id, reply )
+                    if message_text == "<GET_STARTED_PAYLOAD>" :
+                        reply = first_use( sender_id )
+                        send_template_message( reply )
+                    else : #update personal preference
+                        reply = handle_feedback( message_text, sender_id )
+                        send_message( sender_id, reply )
 
     return "ok", 200
 
@@ -100,6 +104,10 @@ def handle_feedback(message_text, recipient_id):
         print(rec_result)
         if message_text[0] == 'Y' : return '😀 已更新您的喜好'
         if message_text[0] == 'N' : return '😓 已更新您的喜好'
+
+def first_use( recipient_id ):
+        get_location = template_json.Template_json(recipient_id,template_type=4)
+        return get_location
 
 
 def handle_message(message_text, recipient_id):
@@ -140,8 +148,8 @@ def handle_message(message_text, recipient_id):
 def connect_server(message_text, recipient_id, conn_type, restaurant_id=None, record=None):
     json_dict = {}
     json_dict['type'] = conn_type
-    json_dict['user'] = '洪梓軒66666'
-    #json_dict['user'] = recipient_id
+    #json_dict['user'] = '洪梓軒66666'
+    json_dict['user'] = recipient_id
     json_dict['location'] = '87.87, 887.87'
     if restaurant_id : json_dict['restaurant_id'] = restaurant_id
     if record : json_dict['record'] = record
