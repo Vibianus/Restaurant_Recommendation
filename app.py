@@ -39,7 +39,6 @@ def webhook():
             for messaging_event in entry["messaging"]:
 
                 if messaging_event.get("message"):  # someone sent us a message
-                    print('testtesttest')
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
 
@@ -143,14 +142,15 @@ def handle_message(message_text, recipient_id):
         return '多多休息，要記得看醫生喔'
 
     if u'餐廳'.encode("utf8") in message_text or u'吃飯'.encode("utf8") in message_text or u'吃的'.encode("utf8") in message_text or u'吃什麼'.encode("utf8") in message_text or u'午餐'.encode("utf8") in message_text or u'晚餐'.encode("utf8") in message_text:
-        rec_result = connect_server( recipient_id, 'R')
-        restaurant = template_json.Template_json(recipient_id,template_type=1)
-        for item in rec_result :
-            if 'chinese_type' in item :
-                restaurant.addItem( item['title'], item['picture'], item['res_key'], item['chinese_type'] + '  ' +item['address'])
-            else :
-                restaurant.addItem( item['title'], item['picture'], item['res_key'], item['address'])
-        return restaurant
+        # rec_result = connect_server( recipient_id, 'R')
+        # restaurant = template_json.Template_json(recipient_id,template_type=1)
+        # for item in rec_result :
+        #     if 'chinese_type' in item :
+        #         restaurant.addItem( item['title'], item['picture'], item['res_key'], item['chinese_type'] + '  ' +item['address'])
+        #     else :
+        #         restaurant.addItem( item['title'], item['picture'], item['res_key'], item['address'])
+        # return restaurant
+        return '多多休息，要記得看醫生喔'
 
     return '😵😵不太懂剛剛的話呢'
 
