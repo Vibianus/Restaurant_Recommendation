@@ -73,13 +73,9 @@ def webhook():
                 if messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
-                    if "text" in messaging_event["postback"]["payload"] :
-
-
-
                     message_text = messaging_event["postback"]["payload"]  # the message's text
                     message_text = message_text.encode('utf-8')
-                    if message_text == "<GET_STARTED_PAYLOAD>" :
+                    if message_text == "<GET_STARTED_PAYLOAD>" : # first time get location
                         reply = first_use( sender_id )
                         send_template_message( reply )
                     else : #update personal preference
