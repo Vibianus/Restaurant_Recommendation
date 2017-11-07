@@ -110,7 +110,7 @@ def log(message):  # simple wrapper for logging to stdout on heroku
 
 def handle_feedback(message_text, recipient_id):
         rec_result = connect_server( recipient_id, 'U', restaurant_id=message_text[1:], record=message_text[0])
-        print(rec_result)
+
         if message_text[0] == 'Y' : return '😀 已更新您的喜好'
         if message_text[0] == 'N' : return '😓 已更新您的喜好'
 
