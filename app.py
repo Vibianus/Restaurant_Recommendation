@@ -47,7 +47,7 @@ def webhook():
                             if "payload" in attachment and "coordinates" in attachment["payload"] :
                                 location = attachment["payload"]["coordinates"]
                                 check = connect_server( sender_id, 'A', location=location)
-                                print(str(check))
+
                                 reply = "已記錄位置資訊😀   日後想更改位置可以再次傳送位置給我~"
                                 send_message( sender_id, reply )
                         break
@@ -142,15 +142,14 @@ def handle_message(message_text, recipient_id):
         return '多多休息，要記得看醫生喔'
 
     if u'餐廳'.encode("utf8") in message_text or u'吃飯'.encode("utf8") in message_text or u'吃的'.encode("utf8") in message_text or u'吃什麼'.encode("utf8") in message_text or u'午餐'.encode("utf8") in message_text or u'晚餐'.encode("utf8") in message_text:
-        # rec_result = connect_server( recipient_id, 'R')
-        # restaurant = template_json.Template_json(recipient_id,template_type=1)
-        # for item in rec_result :
-        #     if 'chinese_type' in item :
-        #         restaurant.addItem( item['title'], item['picture'], item['res_key'], item['chinese_type'] + '  ' +item['address'])
-        #     else :
-        #         restaurant.addItem( item['title'], item['picture'], item['res_key'], item['address'])
-        # return restaurant
-        return '好的 一路順風 🙂'
+        rec_result = connect_server( recipient_id, 'R')
+        restaurant = template_json.Template_json(recipient_id,template_type=1)
+        for item in rec_result :
+            if 'chinese_type' in item :
+                restaurant.addItem( item['title'], item['picture'], item['res_key'], item['chinese_type'] + '  ' +item['address'])
+            else :
+                restaurant.addItem( item['title'], item['picture'], item['res_key'], item['address'])
+        return restaurant
 
     return '😵😵不太懂剛剛的話呢'
 
@@ -165,7 +164,7 @@ def connect_server( recipient_id, conn_type, restaurant_id=None, record=None, lo
     json_item = json.dumps(json_dict)
 
     r = requests.get('http://140.116.247.172:8888', data=json_item.encode('utf-8')).content
-    log(r)
+    log( 'gotjson : ' + str(r))
     return json.loads(r.decode('utf-8'))
 
 
