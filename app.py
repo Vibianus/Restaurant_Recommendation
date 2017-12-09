@@ -121,7 +121,7 @@ def first_use( recipient_id ):
     return get_location
 
 
-def rec_procedure( recipient_id ):
+#def rec_procedure( recipient_id ):
     #if u'早餐'.encode("utf8") in message_text or u'早上'.encode("utf8") in message_text :
 
 
