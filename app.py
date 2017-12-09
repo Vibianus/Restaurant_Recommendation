@@ -39,15 +39,24 @@ def webhook():
             for messaging_event in entry["messaging"]:
 
                 if messaging_event.get("message"):  # someone sent us a message
-
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
+
+                    if "attachments" in messaging_event["message"] :
+                        for attachment in messaging_event["message"]["attachments"] :
+                            if "payload" in attachment and "coordinates" in attachment["payload"] :
+                                location = attachment["payload"]["coordinates"]
+                                check = connect_server( sender_id, 'A', location=location)
+
+                                reply = "已記錄位置資訊😀   日後想更改位置可以再次傳送位置給我~"
+                                send_message( sender_id, reply )
+                        break
 
                     if "text" in messaging_event["message"] :
                         message_text = messaging_event["message"]["text"]  # the message's text
                         message_text = message_text.encode('utf-8').lower()
 
-                        reply = handle_message( message_text, sender_id)
+                        reply = handle_message( message_text, sender_id )
 
                         if type(reply) == str :
                             send_message( sender_id, reply )
@@ -66,8 +75,12 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["postback"]["payload"]  # the message's text
                     message_text = message_text.encode('utf-8')
-                    reply = handle_feedback( message_text, sender_id )
-                    send_message( sender_id, reply )
+                    if message_text == "<GET_STARTED_PAYLOAD>" : # first time get location
+                        reply = first_use( sender_id )
+                        send_template_message( reply )
+                    else : #update personal preference
+                        reply = handle_feedback( message_text, sender_id )
+                        send_message( sender_id, reply )
 
     return "ok", 200
 
@@ -96,10 +109,14 @@ def log(message):  # simple wrapper for logging to stdout on heroku
     sys.stdout.flush()
 
 def handle_feedback(message_text, recipient_id):
-        rec_result = connect_server(message_text, recipient_id, 'U', restaurant_id=message_text[1:], record=message_text[0])
-        print(rec_result)
+        rec_result = connect_server( recipient_id, 'U', restaurant_id=message_text[1:], record=message_text[0])
+
         if message_text[0] == 'Y' : return '😀 已更新您的喜好'
         if message_text[0] == 'N' : return '😓 已更新您的喜好'
+
+def first_use( recipient_id ):
+        get_location = template_json.Template_json(recipient_id,template_type=4)
+        return get_location
 
 
 def handle_message(message_text, recipient_id):
@@ -113,6 +130,9 @@ def handle_message(message_text, recipient_id):
     if u'早安'.encode("utf8") in message_text :
         return '早安!'
 
+    if u'你好'.encode("utf8") in message_text :
+        return '你好r'
+
     if u'天氣'.encode("utf8") in message_text :
         if u'雨'.encode("utf8") in message_text :
             return '下雨路上濕滑，騎車的話要小心!'
@@ -125,8 +145,7 @@ def handle_message(message_text, recipient_id):
         return '多多休息，要記得看醫生喔'
 
     if u'餐廳'.encode("utf8") in message_text or u'吃飯'.encode("utf8") in message_text or u'吃的'.encode("utf8") in message_text or u'吃什麼'.encode("utf8") in message_text or u'午餐'.encode("utf8") in message_text or u'晚餐'.encode("utf8") in message_text:
-
-        rec_result = connect_server(message_text, recipient_id, 'R')
+        rec_result = connect_server( recipient_id, 'R')
         restaurant = template_json.Template_json(recipient_id,template_type=1)
         for item in rec_result :
             if 'chinese_type' in item :
@@ -137,16 +156,18 @@ def handle_message(message_text, recipient_id):
 
     return '😵😵不太懂剛剛的話呢'
 
-def connect_server(message_text, recipient_id, conn_type, restaurant_id=None, record=None):
+def connect_server( recipient_id, conn_type, restaurant_id=None, record=None, location=None):
     json_dict = {}
     json_dict['type'] = conn_type
-    json_dict['user'] = '洪梓軒66666'
-    json_dict['location'] = '87.87, 887.87'
+    #json_dict['user'] = '洪梓軒66666'
+    json_dict['user'] = recipient_id
+    if location : json_dict['location'] = location
     if restaurant_id : json_dict['restaurant_id'] = restaurant_id
     if record : json_dict['record'] = record
     json_item = json.dumps(json_dict)
 
     r = requests.get('http://140.116.247.172:8888', data=json_item.encode('utf-8')).content
+    log( 'gotjson : ' + str(r))
     return json.loads(r.decode('utf-8'))
 
 
