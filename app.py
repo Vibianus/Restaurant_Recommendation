@@ -122,7 +122,7 @@ def first_use( recipient_id ):
 
 
 def rec_procedure( recipient_id ):
-    if u'早餐'.encode("utf8") in message_text or u'早上'.encode("utf8") in message_text :
+    #if u'早餐'.encode("utf8") in message_text or u'早上'.encode("utf8") in message_text :
 
 
 def handle_message(message_text, recipient_id):
