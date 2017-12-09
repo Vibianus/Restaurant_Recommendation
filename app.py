@@ -116,13 +116,16 @@ def handle_feedback(message_text, recipient_id):
 
 def first_use( recipient_id ):
     get_location = template_json.Template_json(recipient_id,template_type=4)
-    change_status = connect_server( recipient_id, 'S', status="Ready" )
+    status = dict()
+    status['time'] = ""
+    status['location'] = ""
+    change_status = connect_server( recipient_id, 'S', status=status )
     log(change_status['result'])
     return get_location
 
 
-#def rec_procedure( recipient_id ):
-    #if u'早餐'.encode("utf8") in message_text or u'早上'.encode("utf8") in message_text :
+# def rec_procedure( message_text, recipient_id ):
+#     if u'早餐'.encode("utf8") in message_text or u'早上'.encode("utf8") in message_text :
 
 
 def handle_message(message_text, recipient_id):
