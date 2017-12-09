@@ -75,7 +75,7 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["postback"]["payload"]  # the message's text
                     message_text = message_text.encode('utf-8')
-                    if message_text == "<GET_STARTED_PAYLOAD>" : # first time get location
+                    if message_text == "<GET_STARTED_PAYLOAD>" : # first time get location & set status
                         reply = first_use( sender_id )
                         send_template_message( reply )
                     else : #update personal preference
@@ -109,14 +109,20 @@ def log(message):  # simple wrapper for logging to stdout on heroku
     sys.stdout.flush()
 
 def handle_feedback(message_text, recipient_id):
-        rec_result = connect_server( recipient_id, 'U', restaurant_id=message_text[1:], record=message_text[0])
+    rec_result = connect_server( recipient_id, 'U', restaurant_id=message_text[1:], record=message_text[0])
 
-        if message_text[0] == 'Y' : return '😀 已更新您的喜好'
-        if message_text[0] == 'N' : return '😓 已更新您的喜好'
+    if message_text[0] == 'Y' : return '😀 已更新您的喜好'
+    if message_text[0] == 'N' : return '😓 已更新您的喜好'
 
 def first_use( recipient_id ):
-        get_location = template_json.Template_json(recipient_id,template_type=4)
-        return get_location
+    get_location = template_json.Template_json(recipient_id,template_type=4)
+    change_status = connect_server( recipient_id, 'S', status="Ready" )
+    log(change_status['result'])
+    return get_location
+
+
+def rec_procedure( recipient_id ):
+    if u'早餐'.encode("utf8") in message_text or u'早上'.encode("utf8") in message_text :
 
 
 def handle_message(message_text, recipient_id):
@@ -145,18 +151,24 @@ def handle_message(message_text, recipient_id):
         return '多多休息，要記得看醫生喔'
 
     if u'餐廳'.encode("utf8") in message_text or u'吃飯'.encode("utf8") in message_text or u'吃的'.encode("utf8") in message_text or u'吃什麼'.encode("utf8") in message_text or u'午餐'.encode("utf8") in message_text or u'晚餐'.encode("utf8") in message_text:
-        rec_result = connect_server( recipient_id, 'R')
-        restaurant = template_json.Template_json(recipient_id,template_type=1)
-        for item in rec_result :
-            if 'chinese_type' in item :
-                restaurant.addItem( item['title'], item['picture'], item['res_key'], item['chinese_type'] + '  ' +item['address'])
-            else :
-                restaurant.addItem( item['title'], item['picture'], item['res_key'], item['address'])
-        return restaurant
+        stat_result = connect_server( recipient_id, 'F' )
+        return str(stat_result['result'])
+
+        # if u'早餐'.encode("utf8") in message_text or u'早上'.encode("utf8") in message_text :
+        #
+        #
+        # rec_result = connect_server( recipient_id, 'R')
+        # restaurant = template_json.Template_json(recipient_id,template_type=1)
+        # for item in rec_result :
+        #     if 'chinese_type' in item :
+        #         restaurant.addItem( item['title'], item['picture'], item['res_key'], item['chinese_type'] + '  ' +item['address'])
+        #     else :
+        #         restaurant.addItem( item['title'], item['picture'], item['res_key'], item['address'])
+        # return restaurant
 
     return '😵😵不太懂剛剛的話呢'
 
-def connect_server( recipient_id, conn_type, restaurant_id=None, record=None, location=None):
+def connect_server( recipient_id, conn_type, restaurant_id=None, record=None, location=None, time=None, status=None):
     json_dict = {}
     json_dict['type'] = conn_type
     #json_dict['user'] = '洪梓軒66666'
