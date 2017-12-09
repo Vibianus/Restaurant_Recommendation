@@ -155,7 +155,7 @@ def handle_message(message_text, recipient_id):
 
     if u'餐廳'.encode("utf8") in message_text or u'吃飯'.encode("utf8") in message_text or u'吃的'.encode("utf8") in message_text or u'吃什麼'.encode("utf8") in message_text or u'午餐'.encode("utf8") in message_text or u'晚餐'.encode("utf8") in message_text:
         stat_result = connect_server( recipient_id, 'F' )
-        if stat_result['time'] == "" and stat_result['location'] == "" :
+        if stat_result['result']['time'] == "" and stat_result['result']['location'] == "" :
             return '多多休息，要記得看醫生喔'
         return str(stat_result['result'])
 
