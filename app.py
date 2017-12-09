@@ -176,6 +176,7 @@ def connect_server( recipient_id, conn_type, restaurant_id=None, record=None, lo
     if location : json_dict['location'] = location
     if restaurant_id : json_dict['restaurant_id'] = restaurant_id
     if record : json_dict['record'] = record
+    if status : json_dict['status'] = status
     json_item = json.dumps(json_dict)
 
     r = requests.get('http://140.116.247.172:8888', data=json_item.encode('utf-8')).content
