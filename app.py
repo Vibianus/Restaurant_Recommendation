@@ -153,18 +153,18 @@ def handle_message(message_text, recipient_id):
 
     stat_result = connect_server( recipient_id, 'F' )
 
-    if stat_result['result']['intent'] = 'Y' :
+    if stat_result['result']['intent'] == 'Y' :
         stat_result['result'] = check_time_and_location(message_text, stat_result['result'])
         if stat_result['result']['location'] == '' and stat_result['result']['time'] == '' :
-            change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
             return '請問在什麼時間地點吃呢?😀'
         elif stat_result['result']['time'] == '' :
-            change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
             return '請問是什麼時間吃呢?😀'
         elif stat_result['result']['location'] == '' :
-            change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
             return '請問在哪裡吃呢?😀'
         else :
+            #change intent
+            stat_result['result']['intent'] = 'N'
+            change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
             return str(stat_result['result'])
 
 
