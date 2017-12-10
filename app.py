@@ -12,6 +12,9 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
+taiwan_location = ['臺北', '台北', '新北', '桃園', ,'臺中', '台中', '臺南', '台南', '高雄', '新竹',
+                    '嘉義', '苗栗', '彰化', '南投', '雲林','屏東', '宜蘭', '花蓮', '台東', '臺東']
+
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -117,11 +120,29 @@ def handle_feedback(message_text, recipient_id):
 def first_use( recipient_id ):
     get_location = template_json.Template_json(recipient_id,template_type=4)
     status = dict()
-    status['time'] = ""
-    status['location'] = ""
+    status['time'] = ''
+    status['location'] = ''
+    status['intent'] = 'N'
     change_status = connect_server( recipient_id, 'S', status=status )
     log(change_status['result'])
     return get_location
+
+def check_time_and_location(message_text, stat):
+    if u'晚上'.encode("utf8") in message_text or u'晚餐'.encode("utf8") in message_text :
+        stat['time'] = 'night'
+    elif u'中午'.encode("utf8") in message_text or u'午餐'.encode("utf8") in message_text :
+        stat['time'] = 'noon'
+    elif u'早上'.encode("utf8") in message_text or u'早餐'.encode("utf8") in message_text :
+        stat['time'] = 'morning'
+
+    if u'這附近'.encode("utf8") in message_text or u'這邊'.encode("utf8") in message_text :
+        stat['location'] = 'here'
+    else :
+        for location in taiwan_location :
+            if location in message_text : stat['location'] = location
+
+    return stat
+
 
 
 # def rec_procedure( message_text, recipient_id ):
@@ -129,6 +150,52 @@ def first_use( recipient_id ):
 
 
 def handle_message(message_text, recipient_id):
+
+    stat_result = connect_server( recipient_id, 'F' )
+
+    if stat_result['result']['intent'] = 'Y' :
+        stat_result['result'] = check_time_and_location(message_text, stat_result['result'])
+        if stat_result['result']['location'] == '' and stat_result['result']['time'] == '' :
+            change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
+            return '請問在什麼時間地點吃呢?😀'
+        elif stat_result['result']['time'] == '' :
+            change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
+            return '請問是什麼時間吃呢?😀'
+        elif stat_result['result']['location'] == '' :
+            change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
+            return '請問在哪裡吃呢?😀'
+        else :
+            return str(stat_result['result'])
+
+
+    if u'餐廳'.encode("utf8") in message_text or u'吃飯'.encode("utf8") in message_text or u'吃的'.encode("utf8") in message_text or u'吃什麼'.encode("utf8") in message_text :
+        #change intent
+        stat_result['result']['intent'] = 'Y'
+        #time,location
+        stat_result['result'] = check_time_and_location(message_text, stat_result['result'])
+
+        if stat_result['result']['location'] == '' and stat_result['result']['time'] == '' :
+            change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
+            return '請問在什麼時間地點吃呢?😀'
+        elif stat_result['result']['time'] == '' :
+            change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
+            return '請問是什麼時間吃呢?😀'
+        elif stat_result['result']['location'] == '' :
+            change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
+            return '請問在哪裡吃呢?😀'
+
+        else :
+            #no need to change intent, since we already finish the recommendation
+            return str(stat_result['result'])
+
+            # rec_result = connect_server( recipient_id, 'R')
+            # restaurant = template_json.Template_json(recipient_id,template_type=1)
+            # for item in rec_result :
+            #     if 'chinese_type' in item :
+            #         restaurant.addItem( item['title'], item['picture'], item['res_key'], item['chinese_type'] + '  ' +item['address'])
+            #     else :
+            #         restaurant.addItem( item['title'], item['picture'], item['res_key'], item['address'])
+            # return restaurant
 
     if u'有空'.encode("utf8") in message_text or u'閒'.encode("utf8") in message_text :
         return '要作什麼呢?'
@@ -153,23 +220,7 @@ def handle_message(message_text, recipient_id):
     if u'不舒服'.encode("utf8") in message_text or u'感冒'.encode("utf8") in message_text :
         return '多多休息，要記得看醫生喔'
 
-    if u'餐廳'.encode("utf8") in message_text or u'吃飯'.encode("utf8") in message_text or u'吃的'.encode("utf8") in message_text or u'吃什麼'.encode("utf8") in message_text or u'午餐'.encode("utf8") in message_text or u'晚餐'.encode("utf8") in message_text:
-        stat_result = connect_server( recipient_id, 'F' )
-        if stat_result['result']['time'] == "" and stat_result['result']['location'] == "" :
-            return '多多休息，要記得看醫生喔'
-        return str(stat_result['result'])
 
-        # if u'早餐'.encode("utf8") in message_text or u'早上'.encode("utf8") in message_text :
-        #
-        #
-        # rec_result = connect_server( recipient_id, 'R')
-        # restaurant = template_json.Template_json(recipient_id,template_type=1)
-        # for item in rec_result :
-        #     if 'chinese_type' in item :
-        #         restaurant.addItem( item['title'], item['picture'], item['res_key'], item['chinese_type'] + '  ' +item['address'])
-        #     else :
-        #         restaurant.addItem( item['title'], item['picture'], item['res_key'], item['address'])
-        # return restaurant
 
     return '😵😵不太懂剛剛的話呢'
 
