@@ -145,13 +145,12 @@ def check_time_and_location(message_text, stat):
 
 def check_stat_and_recommend(message_text, stat_result, recipient_id):
     stat_result['result'] = check_time_and_location(message_text, stat_result['result'])
+    change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
     if stat_result['result']['location'] == '' and stat_result['result']['time'] == '' :
         return '請問在什麼時間地點吃呢?😀'
     elif stat_result['result']['time'] == '' :
-        change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
         return '請問是什麼時間吃呢?😀'
     elif stat_result['result']['location'] == '' :
-        change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
         return '請問在哪裡吃呢?😀'
     else :
 
