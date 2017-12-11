@@ -163,6 +163,8 @@ def check_stat_and_recommend(message_text, stat_result, recipient_id):
 
         #change intent
         stat_result['result']['intent'] = 'N'
+        stat_result['result']['time'] = ''
+        stat_result['result']['location'] = ''
         change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
         return restaurant
 
