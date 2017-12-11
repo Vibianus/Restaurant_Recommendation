@@ -143,7 +143,7 @@ def check_time_and_location(message_text, stat):
 
     return stat
 
-def check_stat_and_recommend(message_text, stat_result):
+def check_stat_and_recommend(message_text, stat_result, recipient_id):
     stat_result['result'] = check_time_and_location(message_text, stat_result['result'])
     if stat_result['result']['location'] == '' and stat_result['result']['time'] == '' :
         return '請問在什麼時間地點吃呢?😀'
