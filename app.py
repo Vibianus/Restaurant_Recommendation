@@ -152,9 +152,6 @@ def check_stat_and_recommend(message_text, stat_result, recipient_id):
     elif stat_result['result']['location'] == '' :
         return '請問在哪裡吃呢?😀'
     else :
-        #change intent
-        stat_result['result']['intent'] = 'N'
-        change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
 
         rec_result = connect_server( recipient_id, 'R')
         restaurant = template_json.Template_json(recipient_id,template_type=1)
@@ -163,6 +160,10 @@ def check_stat_and_recommend(message_text, stat_result, recipient_id):
                 restaurant.addItem( item['title'], item['picture'], item['res_key'], item['chinese_type'] + '  ' +item['address'])
             else :
                 restaurant.addItem( item['title'], item['picture'], item['res_key'], item['address'])
+
+        #change intent
+        stat_result['result']['intent'] = 'N'
+        change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
         return restaurant
 
 
