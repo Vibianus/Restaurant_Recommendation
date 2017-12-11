@@ -175,7 +175,7 @@ def handle_message(message_text, recipient_id):
     stat_result = connect_server( recipient_id, 'F' )
 
     if stat_result['result']['intent'] == 'Y' :
-        return check_stat_and_recommend(message_text, stat_result)
+        return check_stat_and_recommend(message_text, stat_result, recipient_id)
 
 
     if u'餐廳'.encode("utf8") in message_text or u'吃飯'.encode("utf8") in message_text or u'吃的'.encode("utf8") in message_text or u'吃什麼'.encode("utf8") in message_text :
@@ -183,7 +183,7 @@ def handle_message(message_text, recipient_id):
         stat_result['result']['intent'] = 'Y'
         change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
 
-        return check_stat_and_recommend(message_text, stat_result)
+        return check_stat_and_recommend(message_text, stat_result, recipient_id)
 
     if u'有空'.encode("utf8") in message_text or u'閒'.encode("utf8") in message_text :
         return '要作什麼呢?'
