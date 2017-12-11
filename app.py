@@ -186,16 +186,16 @@ def handle_message(message_text, recipient_id):
 
         else :
             #no need to change intent, since we already finish the recommendation
-            return str(stat_result['result'])
+            #return str(stat_result['result'])
 
-            # rec_result = connect_server( recipient_id, 'R')
-            # restaurant = template_json.Template_json(recipient_id,template_type=1)
-            # for item in rec_result :
-            #     if 'chinese_type' in item :
-            #         restaurant.addItem( item['title'], item['picture'], item['res_key'], item['chinese_type'] + '  ' +item['address'])
-            #     else :
-            #         restaurant.addItem( item['title'], item['picture'], item['res_key'], item['address'])
-            # return restaurant
+            rec_result = connect_server( recipient_id, 'R')
+            restaurant = template_json.Template_json(recipient_id,template_type=1)
+            for item in rec_result :
+                if 'chinese_type' in item :
+                    restaurant.addItem( item['title'], item['picture'], item['res_key'], item['chinese_type'] + '  ' +item['address'])
+                else :
+                    restaurant.addItem( item['title'], item['picture'], item['res_key'], item['address'])
+            return restaurant
 
     if u'有空'.encode("utf8") in message_text or u'閒'.encode("utf8") in message_text :
         return '要作什麼呢?'
