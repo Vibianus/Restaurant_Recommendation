@@ -15,6 +15,8 @@ app = Flask(__name__)
 taiwan_location = ['臺北', '台北', '新北', '桃園', '臺中', '台中', '臺南', '台南', '高雄',
                     '新竹', '嘉義', '苗栗', '彰化', '南投', '雲林','屏東', '宜蘭', '花蓮', '台東', '臺東']
 
+global_stat = {}
+
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -64,7 +66,10 @@ def webhook():
                         if type(reply) == str :
                             send_message( sender_id, reply )
                         else : #template
+                            rec_reply = "推薦您" + global_stat['location'] + global_stat['time'] + "的餐廳"
+                            send_message( sender_id, rec_reply )
                             send_template_message( reply )
+
                         pass
 
                 if messaging_event.get("delivery"):  # delivery confirmation
@@ -144,6 +149,7 @@ def check_time_and_location(message_text, stat):
     return stat
 
 def check_stat_and_recommend(message_text, stat_result, recipient_id):
+    global global_stat
     stat_result['result'] = check_time_and_location(message_text, stat_result['result'])
     change_status = connect_server( recipient_id, 'S', status=stat_result['result'] )
     if stat_result['result']['location'] == '' and stat_result['result']['time'] == '' :
@@ -162,7 +168,9 @@ def check_stat_and_recommend(message_text, stat_result, recipient_id):
             else :
                 restaurant.addItem( item['title'], item['picture'], item['res_key'], item['address'])
 
-        #change intent
+        #change global_stat & intent
+        global_stat['time'] = stat_result['result']['time']
+        global_stat['location'] = stat_result['result']['location']
         stat_result['result']['intent'] = 'N'
         stat_result['result']['time'] = ''
         stat_result['result']['location'] = ''
