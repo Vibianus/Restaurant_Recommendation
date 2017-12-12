@@ -67,7 +67,7 @@ def webhook():
                             send_message( sender_id, reply )
                         else : #template
                             #rec_reply = "推薦您" + str(global_stat['location']) + str(global_stat['time']) + "的餐廳"
-                            send_message( sender_id, rec_reply )
+                            #send_message( sender_id, rec_reply )
                             send_template_message( reply )
 
                         pass
