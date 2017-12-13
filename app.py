@@ -66,8 +66,8 @@ def webhook():
                         if type(reply) == str :
                             send_message( sender_id, reply )
                         else : #template
-                            #rec_reply = "推薦您" + str(global_stat['location']) + str(global_stat['time']) + "的餐廳"
-                            #send_message( sender_id, rec_reply )
+                            rec_reply = "推薦您" + str(global_stat['location']) + str(global_stat['time']) + "的餐廳"
+                            send_message( sender_id, rec_reply )
                             send_template_message( reply )
 
                         pass
@@ -172,8 +172,6 @@ def check_stat_and_recommend(message_text, stat_result, recipient_id):
         global_stat['time'] = stat_result['result']['time']
         global_stat['location'] = stat_result['result']['location']
 
-        log(str(stat_result['result']))
-        
         stat_result['result']['intent'] = 'N'
         stat_result['result']['time'] = ''
         stat_result['result']['location'] = ''
