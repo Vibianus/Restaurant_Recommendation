@@ -175,7 +175,8 @@ def check_stat_and_recommend(message_text, stat_result, recipient_id):
         global_stat['time'] = stat_result['result']['time']
         global_stat['location'] = stat_result['result']['location']
         print(stat_result['result']['time'])
-        print(stat_result['result']['location'] + "!!!!!!")
+        print(str(stat_result['result']['location']))
+        print("!!!!!!")
 
         stat_result['result']['intent'] = 'N'
         stat_result['result']['time'] = ''
