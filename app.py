@@ -37,6 +37,7 @@ def webhook():
 
     data = request.get_json()
     log(data)  # you may not want to log every incoming message in production, but it's good for testing
+    global global_stat
 
     if data["object"] == "page":
 
