@@ -15,7 +15,7 @@ app = Flask(__name__)
 taiwan_location = ['臺北', '台北', '新北', '桃園', '臺中', '台中', '臺南', '台南', '高雄',
                     '新竹', '嘉義', '苗栗', '彰化', '南投', '雲林','屏東', '宜蘭', '花蓮', '台東', '臺東']
 
-global_stat = {}
+global_stat = dict()
 
 
 @app.route('/', methods=['GET'])
@@ -174,6 +174,8 @@ def check_stat_and_recommend(message_text, stat_result, recipient_id):
         #change global_stat & intent
         global_stat['time'] = stat_result['result']['time']
         global_stat['location'] = stat_result['result']['location']
+        print(stat_result['result']['time'])
+        print(stat_result['result']['location'] + "!!!!!!")
 
         stat_result['result']['intent'] = 'N'
         stat_result['result']['time'] = ''
