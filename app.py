@@ -67,7 +67,9 @@ def webhook():
                         if type(reply) == str :
                             send_message( sender_id, reply )
                         else : #template
-                            rec_reply = "推薦您" + str(global_stat['location']) + str(global_stat['time']) + "的餐廳"
+                            loc = str(global_stat['location'])
+                            tim = str(global_stat['time'])
+                            rec_reply = "推薦您" + loc + tim + "的餐廳"
                             send_message( sender_id, rec_reply )
                             send_template_message( reply )
 
